@@ -17,17 +17,17 @@
 
 package net.wouterdanes.docker.provider;
 
+import net.wouterdanes.docker.provider.model.ContainerStartConfiguration;
+import net.wouterdanes.docker.provider.model.ExposedPort;
+import net.wouterdanes.docker.remoteapi.model.ContainerInspectionResult;
+import net.wouterdanes.docker.remoteapi.model.ContainerStartRequest;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.wouterdanes.docker.provider.model.ContainerStartConfiguration;
-import net.wouterdanes.docker.provider.model.ExposedPort;
-import net.wouterdanes.docker.remoteapi.model.ContainerInspectionResult;
-import net.wouterdanes.docker.remoteapi.model.ContainerStartRequest;
 
 /**
  * A Docker provider for the remote http api on a locally running docker.
@@ -46,7 +46,8 @@ public class LocalDockerProvider extends RemoteApiBasedDockerProvider {
     @Override
     public ContainerInspectionResult startContainer(final ContainerStartConfiguration configuration) {
         ContainerStartRequest startRequest = new ContainerStartRequest()
-                .withLinks(configuration.getLinks());
+                .withLinks(configuration.getLinks())
+                .withHostConfiguration(configuration.getHostConfiguration());
 
         return super.startContainer(configuration, startRequest);
     }

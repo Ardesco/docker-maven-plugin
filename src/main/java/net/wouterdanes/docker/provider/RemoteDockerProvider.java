@@ -17,15 +17,15 @@
 
 package net.wouterdanes.docker.provider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import net.wouterdanes.docker.provider.model.ContainerStartConfiguration;
 import net.wouterdanes.docker.provider.model.ExposedPort;
 import net.wouterdanes.docker.remoteapi.model.ContainerInspectionResult;
 import net.wouterdanes.docker.remoteapi.model.ContainerStartRequest;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is responsible for providing a docker interface with a remote (not running on localhost) docker host. It
@@ -45,7 +45,8 @@ public class RemoteDockerProvider extends RemoteApiBasedDockerProvider {
     public ContainerInspectionResult startContainer(final ContainerStartConfiguration configuration) {
         ContainerStartRequest startRequest = new ContainerStartRequest()
                 .withAllPortsPublished()
-                .withLinks(configuration.getLinks());
+                .withLinks(configuration.getLinks())
+                .withHostConfiguration(configuration.getHostConfiguration());
 
         return super.startContainer(configuration, startRequest);
     }

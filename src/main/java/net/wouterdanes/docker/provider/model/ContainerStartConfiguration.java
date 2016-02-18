@@ -17,12 +17,12 @@
 
 package net.wouterdanes.docker.provider.model;
 
+import net.wouterdanes.docker.remoteapi.model.ContainerLink;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import net.wouterdanes.docker.remoteapi.model.ContainerLink;
 
 /**
  * This class is responsible for holding the start configuration of a docker container<br> See <a
@@ -37,7 +37,7 @@ public class ContainerStartConfiguration {
     private String id;
     private List<ContainerLink> links;
     private Map<String, String> env;
-    
+
     /**
      * Regular expression to look for that indicates the container has started up
      */
@@ -57,6 +57,11 @@ public class ContainerStartConfiguration {
      * Supply an optional mac address for the container
      */
     private String macAddress;
+
+    /**
+     * An optional host configuration for the container
+     */
+    private ContainerHostConfiguration hostConfiguration;
 
     /**
      * Set the image name or id to use and returns the object so you can chain from/with statements.
@@ -97,8 +102,8 @@ public class ContainerStartConfiguration {
     }
 
     public ContainerStartConfiguration withEnv(Map<String, String> env) {
-    	this.env = env;
-    	return this;
+        this.env = env;
+        return this;
     }
 
     public ContainerStartConfiguration withHostname(String hostname) {
@@ -110,7 +115,12 @@ public class ContainerStartConfiguration {
         this.macAddress = macAddress;
         return this;
     }
-    
+
+    public ContainerStartConfiguration withHostConfiguration(ContainerHostConfiguration hostConfiguration) {
+        this.hostConfiguration = hostConfiguration;
+        return this;
+    }
+
     public String getImage() {
         return image;
     }
@@ -124,7 +134,7 @@ public class ContainerStartConfiguration {
     }
 
     public Map<String, String> getEnv() {
-    	return env != null ? Collections.unmodifiableMap(env) : Collections.<String, String>emptyMap();
+        return env != null ? Collections.unmodifiableMap(env) : Collections.<String, String>emptyMap();
     }
 
     public String getHostname() {
@@ -134,12 +144,16 @@ public class ContainerStartConfiguration {
     public String getMacAddress() {
         return macAddress;
     }
-    
+
     public String getWaitForStartup() {
         return waitForStartup;
     }
 
     public int getStartupTimeout() {
         return startupTimeout != 0 ? startupTimeout : DEFAULT_STARTUP_TIMEOUT;
+    }
+
+    public ContainerHostConfiguration getHostConfiguration() {
+        return hostConfiguration;
     }
 }

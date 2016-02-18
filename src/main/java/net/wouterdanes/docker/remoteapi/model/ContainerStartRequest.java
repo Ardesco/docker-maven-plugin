@@ -17,11 +17,12 @@
 
 package net.wouterdanes.docker.remoteapi.model;
 
+import net.wouterdanes.docker.provider.model.ContainerHostConfiguration;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * See <a href="http://docs.docker.io/reference/api/docker_remote_api_v1.10/#21-containers">
@@ -32,6 +33,8 @@ public class ContainerStartRequest {
 
     @JsonProperty("Binds")
     private List<String> binds;
+    @JsonProperty("VolumesFrom")
+    private List<String> volumes;
     @JsonProperty("LxcConf")
     private Map<String, String> lxcConf;
     @JsonProperty("PortBindings")
@@ -71,6 +74,14 @@ public class ContainerStartRequest {
     public ContainerStartRequest withLinks(List<ContainerLink> links) {
         for (ContainerLink link : links) {
             addLink(link.getContainerId(), link.getContainerAlias());
+        }
+        return this;
+    }
+
+    public ContainerStartRequest withHostConfiguration(ContainerHostConfiguration hostConfiguration) {
+        if (hostConfiguration != null) {
+            this.binds = hostConfiguration.getBinds();
+            this.volumes = hostConfiguration.getVolumesFrom();
         }
         return this;
     }

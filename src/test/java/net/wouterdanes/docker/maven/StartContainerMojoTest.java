@@ -20,6 +20,7 @@ package net.wouterdanes.docker.maven;
 import net.wouterdanes.docker.provider.AbstractFakeDockerProvider;
 import net.wouterdanes.docker.provider.DockerExceptionThrowingDockerProvider;
 import net.wouterdanes.docker.provider.DockerProviderSupplier;
+import net.wouterdanes.docker.provider.model.ContainerHostConfiguration;
 import net.wouterdanes.docker.provider.model.ContainerStartConfiguration;
 import net.wouterdanes.docker.provider.model.ExposedPort;
 import net.wouterdanes.docker.provider.model.ImageBuildConfiguration;
@@ -359,6 +360,27 @@ public class StartContainerMojoTest {
 
         ContainerStartConfiguration passedValue = captor.getValue();
         assertEquals("12:34:56:78:9a:bc", passedValue.getMacAddress());
+    }
+
+
+    @Test
+    public void testThatHostConfigurationGetsPassedToDocker() throws Exception {
+        ContainerHostConfiguration hostConfiguration = new ContainerHostConfiguration()
+                .setBinds("host_path:container_path", "volume_name:container_path:ro")
+                .setVolumesFrom("some-container:ro");
+        ContainerStartConfiguration configuration = new ContainerStartConfiguration().withHostConfiguration(hostConfiguration);
+        StartContainerMojo mojo = createMojo(configuration);
+
+        mojo.execute();
+
+        ArgumentCaptor<ContainerStartConfiguration> captor = ArgumentCaptor.forClass(ContainerStartConfiguration.class);
+        verify(FakeDockerProvider.instance).startContainer(captor.capture());
+
+        assert mojo.getPluginErrors().isEmpty();
+
+        ContainerStartConfiguration passedValue = captor.getValue();
+        assertEquals("[host_path:container_path, volume_name:container_path:ro]", passedValue.getHostConfiguration().getBinds().toString());
+        assertEquals("[some-container:ro]", passedValue.getHostConfiguration().getVolumesFrom().toString());
     }
 
     private StartContainerMojo createMojo(final ContainerStartConfiguration startConfiguration) {

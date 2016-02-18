@@ -193,7 +193,7 @@ The hostname can be set by adding a <hostname> element to a container configurat
                 <hostname>appserver1</hostname>
             </container>
 
-## Setting the hostname
+## Setting the macAddress
 
 The macAddress can be set by adding a <macAddress> element to a container configuration.
 
@@ -202,6 +202,32 @@ The macAddress can be set by adding a <macAddress> element to a container config
                 <image>app</image>
                 <macAddress>12:34:56:78:9a:bc</macAddress>
             </container>
+            
+## Setting a host configuration
+
+You can modify the host configuration to set volume bindings between the container and your local machine, or volume bindings between different containers. 
+
+            <container>
+                <id>app</id>
+                <image>app</image>
+                <hostConfiguration>
+                    <binds>
+                        <bind>/apps</bind>
+                        <bind>/log:/var/logs</bind>
+                    </binds>
+                    <volumesFrom>
+                        <volume>nginx:ro</volume>
+                    </volumesFrom>
+                </hostConfiguration>
+            </container>
+            
+`<binds>` a list of bindings stored as `<bind>` elements.  The available options are:
+ - container_path to create a new volume for the container
+ - `host_path:container_path` to bind-mount a host path into the container
+ - `host_path:container_path:ro` to make the bind-mount read-only inside the container.
+ - `volume_name:container_path` to bind-mount a volume managed by a volume plugin into the container.
+ - `volume_name:container_path:ro` to make the bind mount read-only inside the container.  
+`<container>` a list of volumes to inherit from another container. Specified in the form `container_name[:<ro|rw>]`            
 
 ## Linking containers
 
